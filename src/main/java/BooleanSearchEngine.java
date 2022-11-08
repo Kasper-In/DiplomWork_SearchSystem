@@ -6,6 +6,7 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BooleanSearchEngine implements SearchEngine {
    Map<String, List<PageEntry>> wordByPages = new HashMap<>();
@@ -43,6 +44,13 @@ public class BooleanSearchEngine implements SearchEngine {
 
     @Override
     public List<PageEntry> search(String word) {
-        return wordByPages.get(word.toLowerCase());
+        List<PageEntry> list = wordByPages.get(word.toLowerCase());
+        try {
+            Collections.sort(list);
+        } catch (NullPointerException e){
+            return list;
+        }
+        return list;
+
     }
 }
