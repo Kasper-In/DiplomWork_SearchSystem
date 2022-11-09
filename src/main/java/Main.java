@@ -1,3 +1,6 @@
+import searchengine.BooleanSearchEngine;
+import server.SearchServer;
+
 import java.io.File;
 
 public class Main {

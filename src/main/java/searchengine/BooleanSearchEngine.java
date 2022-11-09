@@ -1,7 +1,10 @@
+package searchengine;
+
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+import searchengine.PageEntry;
 
 import java.io.*;
 import java.util.*;

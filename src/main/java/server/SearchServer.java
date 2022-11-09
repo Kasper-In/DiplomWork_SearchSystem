@@ -1,4 +1,8 @@
+package server;
+
 import com.google.gson.Gson;
+import searchengine.BooleanSearchEngine;
+import searchengine.PageEntry;
 
 import java.io.*;
 import java.net.ServerSocket;
