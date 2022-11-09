@@ -15,7 +15,7 @@ public class SearchServer {
 
     public void start() throws IOException {
         Gson gson = new Gson();
-        BooleanSearchEngine engine = new BooleanSearchEngine(new File("pdfs"));
+        BooleanSearchEngine searchEngine = new BooleanSearchEngine(new File("pdfs"));
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
             System.out.println("Сервер стартовал на порту " + SERVER_PORT + "...");
             while (true) {
@@ -23,19 +23,19 @@ public class SearchServer {
                      BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                      PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)
                 ) {
-                    String request = in.readLine();
-                    String[] words = request.split("\\P{IsAlphabetic}+");
-                    List<PageEntry> resultList = engine.searchWords(words);
+                    String requestClient = in.readLine();
+                    String[] wordsFromRequest = requestClient.split("\\P{IsAlphabetic}+");
+                    List<PageEntry> resultList = searchEngine.searchWords(wordsFromRequest);
                     if (resultList == null || resultList.size() == 0) {
-                        out.println("Слова \"" + request + "\" не найдены");
+                        out.println("Слова \"" + requestClient + "\" не найдены");
                     } else {
                         StringBuilder sb = new StringBuilder();
-                        for (PageEntry line : resultList) {
-                            sb.append(gson.toJson(line));
+                        for (PageEntry pageEntry : resultList) {
+                            sb.append(gson.toJson(pageEntry));
                             sb.append("#");
                         }
-                        String answer = sb.toString();
-                        out.println(answer);
+                        String answerServer = sb.toString();
+                        out.println(answerServer);
                     }
                 }
             }

@@ -17,8 +17,8 @@ public class BooleanSearchEngine implements SearchEngine {
             int countPages = pdfDoc.getNumberOfPages();
             for (int i = 1; i <= countPages; i++) {
                 PdfPage pdfPage = pdfDoc.getPage(i);
-                String text = PdfTextExtractor.getTextFromPage(pdfPage);
-                String[] words = text.split("\\P{IsAlphabetic}+");
+                String textFromPage = PdfTextExtractor.getTextFromPage(pdfPage);
+                String[] words = textFromPage.split("\\P{IsAlphabetic}+");
                 Map<String, Integer> freqByWord = new HashMap<>();
                 for (String word : words) {
                     if (word.isEmpty()) {
@@ -32,9 +32,9 @@ public class BooleanSearchEngine implements SearchEngine {
                     if (wordByPages.containsKey(word)) {
                         wordByPages.get(word).add(pageEntry);
                     } else {
-                        List<PageEntry> list = new ArrayList<>();
-                        list.add(pageEntry);
-                        wordByPages.put(word, list);
+                        List<PageEntry> newList = new ArrayList<>();
+                        newList.add(pageEntry);
+                        wordByPages.put(word, newList);
                     }
                 }
             }
@@ -43,13 +43,13 @@ public class BooleanSearchEngine implements SearchEngine {
 
     @Override
     public List<PageEntry> search(String word) {
-        List<PageEntry> list = wordByPages.get(word.toLowerCase().trim());
+        List<PageEntry> resultList = wordByPages.get(word.toLowerCase().trim());
         try {
-            Collections.sort(list);
+            Collections.sort(resultList);
         } catch (NullPointerException e) {
-            return list;
+            return resultList;
         }
-        return list;
+        return resultList;
 
     }
 
