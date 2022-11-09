@@ -24,13 +24,14 @@ public class SearchServer {
                      PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)
                 ) {
                     String request = in.readLine();
-                    List<PageEntry> listPageEntry = engine.search(request);
-                    if (listPageEntry == null) {
-                        out.println("Слово " + request + " не найдено");
+                    String[] words = request.split("\\P{IsAlphabetic}+");
+                    List<PageEntry> resultList = engine.searchWords(words);
+                    if (resultList == null || resultList.size() == 0) {
+                        out.println("Слова \"" + request + "\" не найдены");
                     } else {
                         StringBuilder sb = new StringBuilder();
-                        for (PageEntry linePageEntry : listPageEntry) {
-                            sb.append(gson.toJson(linePageEntry));
+                        for (PageEntry line : resultList) {
+                            sb.append(gson.toJson(line));
                             sb.append("#");
                         }
                         String answer = sb.toString();
