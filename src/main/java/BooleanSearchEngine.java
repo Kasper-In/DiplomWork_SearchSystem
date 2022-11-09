@@ -3,14 +3,15 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BooleanSearchEngine implements SearchEngine {
     Map<String, List<PageEntry>> wordByPages = new HashMap<>();
+    List<String> stopWords;
 
-    public BooleanSearchEngine(File pdfsDir) throws IOException {
+    public BooleanSearchEngine(File pdfsDir, File stopWordsFile) throws IOException {
         File[] pdfFiles = pdfsDir.listFiles();
         for (File pdfFile : pdfFiles != null ? pdfFiles : new File[0]) {
             PdfDocument pdfDoc = new PdfDocument(new PdfReader(pdfFile));
@@ -39,6 +40,17 @@ public class BooleanSearchEngine implements SearchEngine {
                 }
             }
         }
+        stopWords = addStopWordsFromFile(stopWordsFile);
+    }
+
+    private List<String> addStopWordsFromFile(File file) {
+        List<String> fileInfo = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            fileInfo = reader.lines().collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileInfo;
     }
 
     @Override
@@ -53,10 +65,13 @@ public class BooleanSearchEngine implements SearchEngine {
 
     }
 
-    public List<PageEntry> searchWords(String[] words) {
+    public List<PageEntry> searchWords(Set<String> words) {
         Map<FilePage, Integer> filePageByCount = new HashMap<>();
         List<PageEntry> resultList = new ArrayList<>();
         for (String word : words) {
+            if (words.size() > 1 && stopWords.contains(word)) {
+                continue;
+            }
             List<PageEntry> listPageEntry = search(word);
             if (listPageEntry == null) {
                 break;
